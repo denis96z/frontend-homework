@@ -9,4 +9,15 @@ QUnit.module('Тестируем функцию solve', function () {
 		assert.strictEqual(solve('(5 - x) * (x + 5)', 3), 16);
 		assert.strictEqual(solve('((5 - x) * (x + 5)) * x * x', 3), 144);
 	});
+
+	const typeErr = new TypeError("Expected valid expression and 'x' value!");
+
+	QUnit.test('solve обрабатывает некорректные входные данные ', function(assert) {
+	    assert.throws(function() { solve(null, 1) }, typeErr);
+        assert.throws(function() { solve(undefined, 1) }, typeErr);
+        assert.throws(function() { solve('', 1) }, typeErr);
+        assert.throws(function() { solve('1', null) }, typeErr);
+        assert.throws(function() { solve('1', undefined) }, typeErr);
+        solve('1', 0); // x может принимать значение 0
+    });
 });
