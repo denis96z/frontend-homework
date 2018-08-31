@@ -240,6 +240,52 @@ const convertExpression = function(infixExpressionLexemes) {
     return postfixExpressionLexemes;
 };
 
-const solve = function (expression = null, x = null) {
-    throw NOT_IMPLEMENTED_YET_ERROR;
+const evalExpression = function(postfixExpressionLexemes) {
+    let stack = [];
+
+    for (let i = 0; i < postfixExpressionLexemes.length; i++) {
+        let currentLexeme = postfixExpressionLexemes[i];
+
+        switch (currentLexeme.type) {
+            case LexemeType.CONSTANT:
+                stack.push(currentLexeme);
+                break;
+
+            case LexemeType.OPERATOR:
+                if (stack.length < 2) {
+                    throw INVALID_EXPRESSION_ERROR;
+                }
+                let secondValue = stack.pop().value;
+                let firstValue = stack.pop().value;
+                stack.push({
+                    type: LexemeType.CONSTANT,
+                    value: currentLexeme.value.operation(firstValue, secondValue)
+                });
+                break;
+
+            default:
+                throw NOT_IMPLEMENTED_YET_ERROR;
+        }
+    }
+
+    if (stack.length !== 1) {
+        throw INVALID_EXPRESSION_ERROR;
+    }
+
+    return stack.pop();
+};
+
+const solve = function (expression, x) {
+    validate(typeof expression === "string", ARG_TYPE_ERROR);
+    validate(expression, NO_EXPRESSION_ERROR);
+    validate(typeof x === "number", ARG_TYPE_ERROR);
+
+    const variables = [{ name: 'x', value: x }];
+
+    let infixExpressionLexemes = parseExpression(expression);
+    infixExpressionLexemes = evalVariables(infixExpressionLexemes, variables);
+    let postfixExpressionLexemes = convertExpression(infixExpressionLexemes);
+    let result = evalExpression(postfixExpressionLexemes);
+
+    return result.value;
 };

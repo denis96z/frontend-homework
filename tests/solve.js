@@ -201,6 +201,31 @@ QUnit.module("Тестируем функцию convertExpression", function() {
     });
 });
 
+QUnit.module("Тестируем функцию evalExpression", function() {
+    QUnit.test("evalExpression работает правильно", function(assert) {
+        const testData = [
+            {
+                input: [
+                    {type: LexemeType.CONSTANT, value: 1}
+                ],
+                expected: {type: LexemeType.CONSTANT, value: 1}
+            },
+            {
+                input: [
+                    {type: LexemeType.CONSTANT, value: 1},
+                    {type: LexemeType.CONSTANT, value: 2},
+                    {type: LexemeType.OPERATOR, value: getOperator("+")}
+                ],
+                expected: {type: LexemeType.CONSTANT, value: 3}
+            }
+        ];
+        for (let i = 0; i < testData.length; i++) {
+            var output = evalExpression(testData[i].input);
+            assert.strictEqual(output.value, testData[i].expected.value);
+        }
+    });
+});
+
 QUnit.module('Тестируем функцию solve', function () {
 	QUnit.test('solve работает правильно ', function (assert) {
 		assert.strictEqual(solve('x + 1', 1), 2);
