@@ -18,10 +18,10 @@ const ParserState = {
 };
 
 const OPERATORS = [
-    { sign: '+', operation: (a, b) => a + b },
-    { sign: '-', operation: (a, b) => a - b },
-    { sign: '*', operation: (a, b) => a * b },
-    { sign: '/', operation: (a, b) => a / b },
+    { sign: '+', operation: (a, b) => a + b, precedence: 13 },
+    { sign: '-', operation: (a, b) => a - b, precedence: 13 },
+    { sign: '*', operation: (a, b) => a * b, precedence: 14 },
+    { sign: '/', operation: (a, b) => a / b, precedence: 14 },
 ];
 
 const ARG_TYPE_ERROR = new TypeError();
