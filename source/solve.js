@@ -163,6 +163,21 @@ const parseExpression = function (expression) {
     return lexemes;
 };
 
+const evalVariables = function(lexemes, variables) {
+    for (let i = 0; i < lexemes.length; i++) {
+        if (lexemes[i].type === LexemeType.VARIABLE) {
+            for (let j = 0; j < variables.length; j++) {
+                if (variables[j].name === lexemes[i].value) {
+                    lexemes[i].type = LexemeType.CONSTANT;
+                    lexemes[i].value = variables[j].value;
+                    break;
+                }
+            }
+        }
+    }
+    return lexemes;
+};
+
 const solve = function (expression = null, x = null) {
     throw NOT_IMPLEMENTED_YET;
 };

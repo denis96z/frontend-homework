@@ -42,19 +42,19 @@ QUnit.module("Тестируем функцию getOperator", function() {
     });
 });
 
-QUnit.module("Тестируем функцию parseExpression", function() {
-    const arraysEqual = function (left, right) {
-        if (left.length !== right.length) {
+const arraysEqual = function(left, right) {
+    if (left.length !== right.length) {
+        return false;
+    }
+    for (let i = 0; i < left.lenght; i++) {
+        if (left[i] !== right[i]) {
             return false;
         }
-        for (let i = 0; i < left.lenght; i++) {
-            if (left[i] !== right[i]) {
-                return false;
-            }
-        }
-        return true;
-    };
+    }
+    return true;
+};
 
+QUnit.module("Тестируем функцию parseExpression", function() {
     QUnit.test("parseExpression проверяет входные параметры", function(assert) {
         assert.throws(function(input) {
             parseExpression(0);
@@ -118,6 +118,33 @@ QUnit.module("Тестируем функцию parseExpression", function() {
                 parseExpression(testData[i]);
             }, INVALID_EXPRESSION_ERROR);
         }
+    });
+});
+
+QUnit.module("Тестируем функцию evalVariables", function() {
+    QUnit.test("evalVariables работает правильно", function(assert) {
+        const lexemes = [
+            {type: LexemeType.OPENING_PARENTHESIS},
+            {type: LexemeType.CONSTANT, value: 1},
+            {type: LexemeType.OPERATOR, value: getOperator('*')},
+            {type: LexemeType.VARIABLE, value: 'a'},
+            {type: LexemeType.CLOSING_PARENTHESIS},
+            {type: LexemeType.VARIABLE, value: 'b'}
+        ];
+        const variables = [
+            { name: "a", value: 3 },
+            { name: "b", value: 5 }
+        ];
+        const expected = [
+            {type: LexemeType.OPENING_PARENTHESIS},
+            {type: LexemeType.CONSTANT, value: 1},
+            {type: LexemeType.OPERATOR, value: getOperator('*')},
+            {type: LexemeType.CONSTANT, value: 3},
+            {type: LexemeType.CLOSING_PARENTHESIS},
+            {type: LexemeType.CONSTANT, value: 5}
+        ];
+
+        assert.ok(arraysEqual(evalVariables(lexemes, variables), expected));
     });
 });
 
