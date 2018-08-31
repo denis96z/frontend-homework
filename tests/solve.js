@@ -148,6 +148,59 @@ QUnit.module("Тестируем функцию evalVariables", function() {
     });
 });
 
+QUnit.module("Тестируем функцию convertExpression", function() {
+    QUnit.test("convertExpression работает правильно", function(assert) {
+        const testData = [
+            {
+                input: [
+                    // 3 + 4
+                    {type: LexemeType.CONSTANT, value: 3},
+                    {type: LexemeType.OPERATOR, value: getOperator('+')},
+                    {type: LexemeType.CONSTANT, value: 4}
+                ],
+                expected: [
+                    // 3 4 +
+                    {type: LexemeType.CONSTANT, value: 3},
+                    {type: LexemeType.CONSTANT, value: 4},
+                    {type: LexemeType.OPERATOR, value: getOperator('+')}
+                ]
+            },
+            {
+                input: [
+                    // 1 + 2 * (4 - 3) / 2
+                    {type: LexemeType.CONSTANT, value: 1},
+                    {type: LexemeType.OPERATOR, value: getOperator("+")},
+                    {type: LexemeType.CONSTANT, value: 2},
+                    {type: LexemeType.OPERATOR, value: getOperator("*")},
+                    {type: LexemeType.OPENING_PARENTHESIS},
+                    {type: LexemeType.CONSTANT, value: 4},
+                    {type: LexemeType.OPERATOR, value: getOperator("-")},
+                    {type: LexemeType.CONSTANT, value: 3},
+                    {type: LexemeType.CLOSING_PARENTHESIS},
+                    {type: LexemeType.OPERATOR, value: getOperator("/")},
+                    {type: LexemeType.CONSTANT, value: 2}
+                ],
+                expected: [
+                    // 1 2 4 3 - * 2 / +
+                    {type: LexemeType.CONSTANT, value: 1},
+                    {type: LexemeType.CONSTANT, value: 2},
+                    {type: LexemeType.CONSTANT, value: 4},
+                    {type: LexemeType.CONSTANT, value: 3},
+                    {type: LexemeType.OPERATOR, value: getOperator("-")},
+                    {type: LexemeType.OPERATOR, value: getOperator("*")},
+                    {type: LexemeType.CONSTANT, value: 2},
+                    {type: LexemeType.OPERATOR, value: getOperator("/")},
+                    {type: LexemeType.OPERATOR, value: getOperator("+")}
+                ]
+            }
+        ];
+        for (let i = 0; i < testData.length; i++) {
+            var output = convertExpression(testData[i].input);
+            assert.ok(arraysEqual(output, testData[i].expected));
+        }
+    });
+});
+
 QUnit.module('Тестируем функцию solve', function () {
 	QUnit.test('solve работает правильно ', function (assert) {
 		assert.strictEqual(solve('x + 1', 1), 2);

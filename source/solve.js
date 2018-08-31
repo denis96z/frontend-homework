@@ -27,7 +27,7 @@ const OPERATORS = [
 const ARG_TYPE_ERROR = new TypeError();
 const NO_EXPRESSION_ERROR = new TypeError("Expression expected");
 const INVALID_EXPRESSION_ERROR = new TypeError("Invalid expression");
-const NOT_IMPLEMENTED_YET = new Error("Not implemented yet.");
+const NOT_IMPLEMENTED_YET_ERROR = new Error("Not implemented yet.");
 
 const validate = function (condition, error) {
     if (!condition) {
@@ -154,7 +154,7 @@ const parseExpression = function (expression) {
                 break;
 
             default:
-                throw NOT_IMPLEMENTED_YET;
+                throw NOT_IMPLEMENTED_YET_ERROR;
         }
     }
 
@@ -178,6 +178,68 @@ const evalVariables = function(lexemes, variables) {
     return lexemes;
 };
 
+const convertExpression = function(infixExpressionLexemes) {
+    let stack = [], postfixExpressionLexemes = [];
+
+    for (let i = 0; i < infixExpressionLexemes.length; i++) {
+        let currentLexeme = infixExpressionLexemes[i];
+
+        switch (currentLexeme.type) {
+            case LexemeType.CONSTANT:
+                postfixExpressionLexemes.push(currentLexeme);
+                break;
+
+            case LexemeType.OPENING_PARENTHESIS:
+                stack.push(currentLexeme);
+                break;
+
+            case LexemeType.OPERATOR:
+                while (stack.length > 0) {
+                    let stackTopLexeme = stack[stack.length - 1];
+                    if (stackTopLexeme.type === LexemeType.OPENING_PARENTHESIS) {
+                        break;
+                    } else {
+                        if (stackTopLexeme.value.precedence < currentLexeme.value.precedence) {
+                            break;
+                        }
+                        postfixExpressionLexemes.push(stack.pop());
+                    }
+                }
+                stack.push(currentLexeme);
+                break;
+
+            case LexemeType.CLOSING_PARENTHESIS:
+                let hasOpeningParenthesis = false;
+                while (stack.length > 0) {
+                    let stackTopLexeme = stack[stack.length - 1];
+                    if (stackTopLexeme.type === LexemeType.OPENING_PARENTHESIS) {
+                        stack.pop();
+                        hasOpeningParenthesis = true;
+                        break;
+                    }
+                    postfixExpressionLexemes.push(stack.pop());
+                }
+                if (!hasOpeningParenthesis) {
+                    throw INVALID_EXPRESSION_ERROR;
+                }
+                break;
+
+            default:
+                throw NOT_IMPLEMENTED_YET_ERROR;
+        }
+    }
+
+    while (stack.length > 0) {
+        let stackTopLexeme = stack[stack.length - 1];
+        if (stackTopLexeme.type !== LexemeType.OPERATOR) {
+            throw INVALID_EXPRESSION_ERROR;
+        }
+        postfixExpressionLexemes.push(stack.pop());
+    }
+
+    return postfixExpressionLexemes;
+};
+
 const solve = function (expression = null, x = null) {
-    throw NOT_IMPLEMENTED_YET;
+    throw NOT_IMPLEMENTED_YET_ERROR;
 };
