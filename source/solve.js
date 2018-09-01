@@ -283,8 +283,8 @@ const solve = function (expression, x) {
     const variables = [{ name: 'x', value: x }];
 
     let infixExpressionLexemes = parseExpression(expression);
-    infixExpressionLexemes = evalVariables(infixExpressionLexemes, variables);
-    let postfixExpressionLexemes = convertExpression(infixExpressionLexemes);
+    let infixExpressionLexemesWithConstants = evalVariables(infixExpressionLexemes, variables);
+    let postfixExpressionLexemes = convertExpression(infixExpressionLexemesWithConstants);
     let result = evalExpression(postfixExpressionLexemes);
 
     return result.value;
